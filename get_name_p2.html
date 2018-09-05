@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Player Name</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="game.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Itim|Jua" rel="stylesheet">
+    <style>
+        input {font-family: 'Itim', cursive;}
+        h1, h2, button {font-family: 'Jua', sans-serif;}
+    </style>
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.3/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+</head>
+<body class="bodyGreen">
+    <div class="container-fluid"> 
+        <div class="row" style="margin-top:10px">
+            <div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3 text-center">
+                <img src="images/logo_BIS_2018.png" width="40%" alt="bis_logo"> 
+            </div>
+        </div>
+        <div class="row">
+             <div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3 text-center greenBG"><h1>SHAKE GAME</h1></div>
+             <div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3 text-center greenBG"><h2>PLAYER 2</h2></div>
+        </div>
+        <div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3">
+            <form action="">
+                <div class="form-group">
+                    <input type="text" class="form-control text-center" id="txtCName" placeholder="ENTER YOUR NAME" maxlength="20" required>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-lg center-block" onclick="writeContenderName()">Sign up</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Bootstrap JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-app.js"></script>
+    <!-- Add additional services that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-firestore.js"></script>
+    <script>
+        var config = {
+            apiKey: "AIzaSyCSB9tNBNUsiZqYqFrCxD6suZlfnAxD-0k",
+            authDomain: "bis-shake-game.firebaseapp.com",
+            databaseURL: "https://bis-shake-game.firebaseio.com",
+            projectId: "bis-shake-game",
+            storageBucket: "",
+            messagingSenderId: "626049688989"
+        };
+        firebase.initializeApp(config);
+        // Initialize Cloud Firestore through Firebase
+        var db = firebase.firestore();
+    
+        function writeContenderName() {
+            var gP2Name = document.getElementById('txtCName').value;
+
+            db.collection("player2").add({
+                name: gP2Name,
+                score: 0
+            })
+            .then(function(docRef) {
+                console.log("Document written with ID: ", docRef.id);
+                if(typeof(Storage) !== "undefined") {
+                    localStorage.setItem("P2Name", gP2Name);
+                    // localStorage.setItem("P2docRefID", docRef.id);
+                }
+                // To update docRef
+                db.collection("cdocument").doc("p2").update({
+                    "cdocRef": docRef.id
+                })
+                .then(function() {
+                    console.log("Document successfully updated!");
+                });
+                window.location.replace("index_p2.html");
+            })
+            .catch(function(error) {
+                console.error("Error adding document: ", error);
+            });
+        }
+    
+        function deleteAllDocs() {
+            db.collection("player2").doc("DC").delete().then(function() {
+                console.log("Document successfully deleted!");
+            }).catch(function(error) {
+                console.error("Error removing document: ", error);
+            });
+        }
+            
+    </script>
+</body>
+</html>

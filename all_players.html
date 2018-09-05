@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Competition: All Players</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="game.css" rel="stylesheet">
+    <link href="result.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Itim|Jua" rel="stylesheet">
+    <style>
+        h2 {font-family: 'Itim', cursive; color: whitesmoke}
+        h1, button, h3, h4, .scoreTxt {font-family: 'Jua', sans-serif;}
+        #your_score, #playerTxt {color: whitesmoke;}
+        .scoreTxt {color: whitesmoke; font-size: 48px;}
+    </style>   
+</head>
+<body class="bodyDarkOrchid">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-3 text-center bodyBlue">
+                <div class="col-xs-10 col-xs-offset-1" style="color:#fff"><h3>Player 1</h3></div>
+                <div class="col-xs-10 col-xs-offset-1" style="color:#fff" id="name_p1"></div>
+                <div style="margin-top:100px;margin-bottom:20px">
+                    <img src="images/coin1.png" width="70%" alt="">
+                </div>
+                <div class="col-xs-10 col-xs-offset-1" style="color:#fff"><h3>Score</h3></div>
+                <div class="col-xs-10 col-xs-offset-1 scoreShow scoreTxt" id="score_p1">0</div>
+                <div style="margin-top:600px"></div>
+            </div>
+                <div class="col-xs-3 text-center bodyGreen">
+                    <div class="col-xs-10 col-xs-offset-1" style="color:#fff"><h3>Player 2</h3></div>
+                    <div class="col-xs-10 col-xs-offset-1" style="color:#fff" id="name_p2"></div>
+                    <div style="margin-top:100px;margin-bottom:20px">
+                        <img src="images/coin3.png" width="70%" alt="">
+                    </div>
+                    <div class="col-xs-10 col-xs-offset-1" style="color:#fff"><h3>Score</h3></div>
+                    <div class="col-xs-10 col-xs-offset-1 scoreShow scoreTxt" id="score_p2">0</div>
+                    <div style="margin-top:600px"></div>
+                </div>
+                <div class="col-xs-3 text-center bodyRed">
+                    <div class="col-xs-10 col-xs-offset-1" style="color:#fff"><h3>Player 3</h3></div>
+                    <div class="col-xs-10 col-xs-offset-1" style="color:#fff" id="name_p3"></div>    
+                    <div style="margin-top:100px;margin-bottom:20px">
+                        <img src="images/coin2.png" width="70%" alt="">
+                    </div>
+                    <div class="col-xs-10 col-xs-offset-1" style="color:#fff"><h3>Score</h3></div>
+                    <div class="col-xs-10 col-xs-offset-1 scoreShow scoreTxt" id="score_p3">0</div>
+                    <div style="margin-top:600px"></div>
+                </div>
+                <div class="col-xs-3 text-center bodyYellow">
+                    <div class="col-xs-10 col-xs-offset-1" style="color:#fff"><h3>Player 4</h3></div>
+                    <div class="col-xs-10 col-xs-offset-1" style="color:#fff" id="name_p4"></div>
+                    <div style="margin-top:100px;margin-bottom:20px">
+                        <img src="images/coin4.png" width="70%" alt="">
+                    </div>
+                    <div class="col-xs-10 col-xs-offset-1" style="color:#fff"><h3>Score</h3></div>
+                    <div class="col-xs-10 col-xs-offset-1 scoreShow scoreTxt" id="score_p4">0</div>
+                    <div style="margin-top:600px"></div>
+                </div>
+            </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Bootstrap JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-app.js"></script>
+    <!-- Add additional services that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-firestore.js"></script>
+    <script>
+        var config = {
+            apiKey: "AIzaSyCSB9tNBNUsiZqYqFrCxD6suZlfnAxD-0k",
+            authDomain: "bis-shake-game.firebaseapp.com",
+            databaseURL: "https://bis-shake-game.firebaseio.com",
+            projectId: "bis-shake-game",
+            storageBucket: "",
+            messagingSenderId: "626049688989"
+        };
+            firebase.initializeApp(config);
+            // Initialize Cloud Firestore through Firebase
+            var db = firebase.firestore();
+
+            //player#1
+            //var gcdocRef_p1;
+            db.collection("cdocument").doc("p1").onSnapshot(function(cdoc) {
+                gcdocRef_p1 = cdoc.data().cdocRef;
+                localStorage.setItem("P1docRefID", gcdocRef_p1);
+                var gname_p1 = db.collection("player1").doc(gcdocRef_p1);
+                gname_p1.get().then(function(doc) {
+                    if (doc.exists) {
+                        $("#name_p1").html("<h2>"+doc.data().name+"</h2>");
+                        $("#score_p1").html("0");
+                    }
+                });
+            });
+            console.log(localStorage.getItem("P1docRefID"));
+
+            db.collection("player1").doc(localStorage.getItem("P1docRefID"))
+            .onSnapshot(function(scdoc) {
+                $("#score_p1").html(scdoc.data().score);
+                console.log("Current data: ", scdoc.data());
+            });
+
+            //player#2
+            //var gcdocRef_p2;
+            db.collection("cdocument").doc("p2").onSnapshot(function(cdoc) {
+                gcdocRef_p2 = cdoc.data().cdocRef;
+                localStorage.setItem("P2docRefID", gcdocRef_p2);
+                var gname_p2 = db.collection("player2").doc(gcdocRef_p2);
+                gname_p2.get().then(function(doc) {
+                    if (doc.exists) {
+                        $("#name_p2").html("<h2>"+doc.data().name+"</h2>");
+                        $("#score_p2").html("0");
+                    }
+                });
+            });
+            console.log(localStorage.getItem("P2docRefID"));
+
+            db.collection("player2").doc(localStorage.getItem("P2docRefID"))
+            .onSnapshot(function(scdoc) {
+                $("#score_p2").html(scdoc.data().score);
+                console.log("Current data: ", scdoc.data());
+            });
+
+            //player#3
+            //var gcdocRef_p3;
+            db.collection("cdocument").doc("p3").onSnapshot(function(cdoc) {
+                gcdocRef_p3 = cdoc.data().cdocRef;
+                localStorage.setItem("P3docRefID", gcdocRef_p3);
+                var gname_p3 = db.collection("player3").doc(gcdocRef_p3);
+                gname_p3.get().then(function(doc) {
+                    if (doc.exists) {
+                        $("#name_p3").html("<h2>"+doc.data().name+"</h2>");
+                        $("#score_p3").html("0");
+                    }
+                });
+            });
+            console.log(localStorage.getItem("P3docRefID"));
+
+            db.collection("player3").doc(localStorage.getItem("P3docRefID"))
+            .onSnapshot(function(scdoc) {
+                $("#score_p3").html(scdoc.data().score);
+                console.log("Current data: ", scdoc.data());
+            });
+
+            //player#4
+            //var gcdocRef_p4;
+            db.collection("cdocument").doc("p4").onSnapshot(function(cdoc) {
+                gcdocRef_p4 = cdoc.data().cdocRef;
+                localStorage.setItem("P4docRefID", gcdocRef_p4);
+                var gname_p4 = db.collection("player4").doc(gcdocRef_p4);
+                gname_p4.get().then(function(doc) {
+                    if (doc.exists) {
+                        $("#name_p4").html("<h2>"+doc.data().name+"</h2>");
+                        $("#score_p4").html("0");
+                    }
+                });
+            });
+            console.log(localStorage.getItem("P4docRefID"));
+
+            db.collection("player4").doc(localStorage.getItem("P4docRefID"))
+            .onSnapshot(function(scdoc) {
+                $("#score_p4").html(scdoc.data().score);
+                console.log("Current data: ", scdoc.data());
+            }); 
+    </script>
+</body>
+</html>

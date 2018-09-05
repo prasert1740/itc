@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Start Shaking: Player 2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="game.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Itim|Jua" rel="stylesheet">
+    <style>
+        input, h2 {font-family: 'Itim', cursive;}
+        h1, button, h3, #scoreTxt {font-family: 'Jua', sans-serif;}
+        #your_score, #scoreTxt {color: whitesmoke;}
+        #scoreTxt {font-size: 66px;}
+    </style>
+
+</head>
+<body class="bodyGreen">
+    <div class="container-fluid"> 
+        <div class="row" style="margin-top:10px">
+            <div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3 text-center">
+                <img src="images/logo_BIS_2018.png" width="40%" alt="bis_logo"> 
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3 text-center greenBG"><h1>SHAKE GAME</h1></div>
+                <h2><div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3 text-center greenBG" id="show_p2name"></div></h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3 text-center">
+                <div id="your_score"><h3>Your Score</h3></div>
+            </div>
+            <div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3 text-center">
+                <div id='scoreTxt'>0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Bootstrap JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/alexgibson/shake.js/master/shake.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-app.js"></script>
+    <!-- Add additional services that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-firestore.js"></script>
+    <script>
+        var gP2Name = document.getElementById("show_p2name");
+        gP2Name.innerHTML = localStorage.getItem("P2Name");
+        console.log(localStorage.getItem("P2Name"));
+
+        var config = {
+            apiKey: "AIzaSyCSB9tNBNUsiZqYqFrCxD6suZlfnAxD-0k",
+            authDomain: "bis-shake-game.firebaseapp.com",
+            databaseURL: "https://bis-shake-game.firebaseio.com",
+            projectId: "bis-shake-game",
+            storageBucket: "",
+            messagingSenderId: "626049688989"
+        };
+        firebase.initializeApp(config);
+        // Initialize Cloud Firestore through Firebase
+        var db = firebase.firestore();
+
+        var cdocRefID_p2 = "";
+        var gcdocRef_p2 = db.collection("cdocument").doc("p2");
+        gcdocRef_p2.get().then(function(cdoc) {
+            if (cdoc.exists) {
+                cdocRefID_p2 = cdoc.data().cdocRef;
+            }
+        });
+
+        //listen to shake event
+        scoreAdd=0;
+        startGame=1;
+        var shakeEvent = new Shake({threshold: 10});
+        shakeEvent.start();
+        window.addEventListener('shake', function(){
+            if(startGame==1){
+                scoreAdd=scoreAdd+Math.floor(Math.random() * 3) + 1;
+                $("#scoreTxt").html(scoreAdd);
+                writeP2Score(cdocRefID_p2, scoreAdd);
+            }
+        }, false);
+
+        //stop listening
+        function stopShake(){
+            shakeEvent.stop();
+        }
+    
+        //check if shake is supported or not.
+        if(!("ondevicemotion" in window)){alert("Not Supported");}
+
+        function writeP2Score(docRefId, scoreData) {
+            // To update score
+            db.collection("player2").doc(docRefId).update({
+                "score": scoreData
+            })
+            .then(function() {
+                console.log("Document successfully updated!");
+            });
+        }
+    </script> 
+</body>
+</html>
